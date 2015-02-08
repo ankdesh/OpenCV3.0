@@ -141,3 +141,11 @@ gpA = [G]
 for i in xrange(6):
     G = cv2.pyrDown(G)
     gpA.append(G)
+get_ipython().magic(u'logstart detectoy.ipy append')
+get_ipython().magic(u'logstop')
+get_ipython().system(u'ls -F --color ')
+get_ipython().system(u'rm -i detectoy.ipy')
+get_ipython().magic(u'logstart learn-cvpy.asd append')
+import cv2
+get_ipython().system(u'ls -F --color ')
+get_ipython().magic(u'logstop')
