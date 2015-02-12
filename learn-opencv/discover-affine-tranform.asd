@@ -1,11 +1,8 @@
 # Create transformed image
 
-cv2.imread('checker.png')
 img = cv2.imread('checker.png')
 rows,cols,ch = img.shape
 print img.shape
-pts1 = np.float32([[50,50],[200,50],[50,200]])
-pts2 = np.float32([[10,100],[200,50],[100,250]])
 import numpy as np
 pts1 = np.float32([[50,50],[200,50],[50,200]])
 pts2 = np.float32([[10,100],[200,50],[100,250]])
@@ -37,3 +34,16 @@ for m,n in matches:
                 good.append(m)
         
 print good
+# Got good points, now find Affine matrix using findHomography
+
+src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+    dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+print M # M here is Affine matrix
+
+# Now test
+rows,cols,ch = img.shape
+img_check_affine = cv2.warpPerspective(img,M,(cols,rows))
+cv2.imwrite("Leena_check_affine.png", img_check_affine)
+
+
