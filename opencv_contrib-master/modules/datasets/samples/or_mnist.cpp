@@ -48,6 +48,9 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
+#include <cassert>
+#include <string>
 
 using namespace std;
 using namespace cv;
@@ -74,12 +77,29 @@ int main(int argc, char *argv[])
     // For example, let output train & test sizes and their first elements.
     printf("train size: %u\n", (unsigned int)dataset->getTrain().size());
     printf("test size: %u\n", (unsigned int)dataset->getTest().size());
+  
+    ofstream outFileTrain;
+    ofstream outFileTest;
 
-    OR_mnistObj *example = static_cast<OR_mnistObj *>(dataset->getTrain()[0].get());
-    printf("first train:\nlabel: %u\n", example->label);
-    printf("image was saved to train0.png\n");
-    imwrite("train0.png", example->image);
-
+    outFileTrain.open("TrainLabels.txt",ios::out);
+    outFileTest.open("TestLabels.txt",ios::out);
+    assert(outFileTest != 0 && outFileTrain != 0);
+    
+    OR_mnistObj *example;
+    string fileName;  
+      
+    printf("Dumping all Train images");
+    for(unsigned int i = 0; i < (unsigned int)dataset->getTrain().size(); i++){
+      example = static_cast<OR_mnistObj *>(dataset->getTrain()[i].get()); 
+      stringstream ss;
+      ss << i;
+      fileName = "Train" + ss.str();
+      stringstream ss1;
+      ss1 << (example->label);
+      outFileTrain << fileName + " : " + ss1.str() <<"\n";
+      imwrite(fileName, example->image);
+    }
+    outFileTrain.close();
     example = static_cast<OR_mnistObj *>(dataset->getTest()[0].get());
     printf("first test:\nlabel: %u\n", example->label);
     printf("image was saved to test0.png\n");
