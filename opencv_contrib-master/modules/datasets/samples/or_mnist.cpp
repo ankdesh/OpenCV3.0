@@ -88,22 +88,31 @@ int main(int argc, char *argv[])
     OR_mnistObj *example;
     string fileName;  
       
-    printf("Dumping all Train images");
+    printf("Dumping all Training images\n");
     for(unsigned int i = 0; i < (unsigned int)dataset->getTrain().size(); i++){
       example = static_cast<OR_mnistObj *>(dataset->getTrain()[i].get()); 
       stringstream ss;
       ss << i;
-      fileName = "Train" + ss.str();
+      fileName = "Train" + ss.str() + ".png";
       stringstream ss1;
-      ss1 << (example->label);
+      ss1 << (int)(example->label);
       outFileTrain << fileName + " : " + ss1.str() <<"\n";
       imwrite(fileName, example->image);
     }
     outFileTrain.close();
-    example = static_cast<OR_mnistObj *>(dataset->getTest()[0].get());
-    printf("first test:\nlabel: %u\n", example->label);
-    printf("image was saved to test0.png\n");
-    imwrite("test0.png", example->image);
+      
+    printf("Dumping all Training images\n");
+    for(unsigned int i = 0; i < (unsigned int)dataset->getTest().size(); i++){
+      example = static_cast<OR_mnistObj *>(dataset->getTest()[i].get()); 
+      stringstream ss;
+      ss << i;
+      fileName = "Test" + ss.str() + ".png";
+      stringstream ss1;
+      ss1 << (int)(example->label);
+      outFileTest << fileName + " : " + ss1.str() <<"\n";
+      imwrite(fileName, example->image);
+    }
+    outFileTest.close();
 
     return 0;
 }
