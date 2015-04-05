@@ -49,7 +49,7 @@ using namespace cv::xfeatures2d;
 const string IMAGE_TSUKUBA = "/features2d/tsukuba.png";
 const string IMAGE_BIKES = "/detectors_descriptors_evaluation/images_datasets/bikes/img1.png";
 
-#define SHOW_DEBUG_LOG 0
+#define SHOW_DEBUG_LOG 1
 
 static
 Mat generateHomography(float angle)
@@ -300,8 +300,8 @@ protected:
                 }
             }
 #if SHOW_DEBUG_LOG
-            std::cout << "keyPointMatchesRatio - " << keyPointMatchesRatio
-                << " - angleInliersRatio " << static_cast<float>(angleInliersCount) / keyPointMatchesCount << std::endl;
+            std::cout << "angle-" << angle << "-keyPointMatchesRatio-" << keyPointMatchesRatio
+                << "-angleInliersRatio-" << static_cast<float>(angleInliersCount) / keyPointMatchesCount << std::endl;
 #endif
         }
         ts->set_failed_test_info( cvtest::TS::OK );
@@ -367,11 +367,14 @@ protected:
             vector<DMatch> descMatches;
             bfmatcher.match(descriptors0, descriptors1, descMatches);
 
+            float intersectionRatio;
             int descInliersCount = 0;
             for(size_t m = 0; m < descMatches.size(); m++)
             {
                 const KeyPoint& transformed_p0 = keypoints1[descMatches[m].queryIdx];
                 const KeyPoint& p1 = keypoints1[descMatches[m].trainIdx];
+                intersectionRatio = calcIntersectRatio(transformed_p0.pt, 0.5f * transformed_p0.size,
+                                      p1.pt, 0.5f * p1.size);
                 if(calcIntersectRatio(transformed_p0.pt, 0.5f * transformed_p0.size,
                                       p1.pt, 0.5f * p1.size) >= minIntersectRatio)
                 {
@@ -388,7 +391,8 @@ protected:
                 return;
             }
 #if SHOW_DEBUG_LOG
-            std::cout << "descInliersRatio " << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
+            std::cout << "angle-" << angle << "-intersectionRatio-" << intersectionRatio ;
+            std::cout <<  "-descInliersRatio-" << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
 #endif
         }
         ts->set_failed_test_info( cvtest::TS::OK );
@@ -507,8 +511,8 @@ protected:
                 }
             }
 #if SHOW_DEBUG_LOG
-            std::cout << "keyPointMatchesRatio - " << keyPointMatchesRatio
-                << " - scaleInliersRatio " << static_cast<float>(scaleInliersCount) / keyPointMatchesCount << std::endl;
+            std::cout << "scale-" << scale << "-keyPointMatchesRatio-" << keyPointMatchesRatio
+                << "-scaleInliersRatio-" << static_cast<float>(scaleInliersCount) / keyPointMatchesCount << std::endl;
 #endif
         }
         ts->set_failed_test_info( cvtest::TS::OK );
@@ -575,11 +579,14 @@ protected:
             bfmatcher.match(descriptors0, descriptors1, descMatches);
 
             const float minIntersectRatio = 0.5f;
+            float intersectionRatio;
             int descInliersCount = 0;
             for(size_t m = 0; m < descMatches.size(); m++)
             {
                 const KeyPoint& transformed_p0 = keypoints0[descMatches[m].queryIdx];
                 const KeyPoint& p1 = keypoints0[descMatches[m].trainIdx];
+                intersectionRatio = calcIntersectRatio(transformed_p0.pt, 0.5f * transformed_p0.size,
+                                      p1.pt, 0.5f * p1.size);
                 if(calcIntersectRatio(transformed_p0.pt, 0.5f * transformed_p0.size,
                                       p1.pt, 0.5f * p1.size) >= minIntersectRatio)
                 {
@@ -596,7 +603,8 @@ protected:
                 return;
             }
 #if SHOW_DEBUG_LOG
-            std::cout << "descInliersRatio " << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
+            std::cout << "scale-" << scale << "-intersectionRatio-" << intersectionRatio;
+            std::cout << "-descInliersRatio-" << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
 #endif
         }
         ts->set_failed_test_info( cvtest::TS::OK );
